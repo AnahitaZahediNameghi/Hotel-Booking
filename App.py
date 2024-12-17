@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -54,6 +53,17 @@ df['Region'] = df['country'].map(country_to_region).fillna('Unknown')
 # --- Streamlit App ---
 st.title('Hotel Booking Analysis')
 
+color_options = {
+    "Default": ['skyblue'], 
+    "Pastel": px.colors.qualitative.Pastel,
+    "Set1": px.colors.qualitative.Set1,
+    "Dark24": px.colors.qualitative.Dark24,
+    "G10": px.colors.qualitative.G10,
+     "Alphabet": px.colors.qualitative.Alphabet
+}
+
+selected_color = st.selectbox('Select Color Palette', list(color_options.keys()))
+
 # --- Bookings by Month ---
 st.header('Bookings by Month')
 num_of_booking_in_month = df.groupby('Month')['lead_time'].count()
@@ -65,10 +75,8 @@ num_of_booking_in_month = num_of_booking_in_month.reindex([
 fig_month = px.bar(x = num_of_booking_in_month.index, y = num_of_booking_in_month.values,
                     labels = {'x': 'Month', 'y': 'Number of Bookings'},
                     title = 'Number of Bookings per Month',
-                    color_discrete_sequence = ['skyblue'])
+                    color_discrete_sequence = color_options[selected_color])
 st.plotly_chart(fig_month)
-
-
 
 # --- Bookings by Week ---
 st.header('Bookings by Week')
@@ -76,7 +84,7 @@ num_of_booking_in_week = df.groupby('Week')['lead_time'].count()
 fig_week = px.bar(x = num_of_booking_in_week.index, y = num_of_booking_in_week.values,
                     labels = {'x': 'Week', 'y': 'Number of Bookings'},
                     title = 'Number of Bookings per Week',
-                    color_discrete_sequence = ['skyblue'])
+                    color_discrete_sequence = color_options[selected_color])
 st.plotly_chart(fig_week)
 
 # --- Bookings by Weekday (Name and Number) ---
@@ -88,7 +96,7 @@ with col1:
     fig_weekname = px.bar(x = num_of_booking_in_weekname.index, y = num_of_booking_in_weekname.values,
                     labels = {'x': 'Week Name', 'y': 'Number of Bookings'},
                     title = 'Number of Bookings Per Week Name',
-                    color_discrete_sequence = ['skyblue'])
+                    color_discrete_sequence=color_options[selected_color])
     st.plotly_chart(fig_weekname)
 with col2:
     st.subheader('Bookings by Weekday Number')
@@ -96,7 +104,7 @@ with col2:
     fig_weekday = px.bar(x = num_of_booking_in_weekday.index, y = num_of_booking_in_weekday.values,
                         labels = {'x': 'Weekday Number', 'y': 'Number of Bookings'},
                         title = 'Number of Bookings Per Weekday Number',
-                        color_discrete_sequence = ['skyblue'])
+                        color_discrete_sequence = color_options[selected_color])
     st.plotly_chart(fig_weekday)
     
 # --- Bookings per Region by Month ---
@@ -105,10 +113,9 @@ num_of_bookings_per_region = df.groupby(['Region', 'Month'])['lead_time'].count(
 fig_region = px.bar(num_of_bookings_per_region, x = "Month", y = "lead_time", color = "Region",
                     title = "Number of Bookings per Month by Region",
                     labels = {'lead_time': 'Number of Bookings'},
-                    log_y = True)
+                    log_y = True,
+                     color_discrete_sequence = color_options[selected_color])
 st.plotly_chart(fig_region)
-
-
 
 # --- Display Raw Data ---
 if st.checkbox("Show Raw Data"):
